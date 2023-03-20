@@ -17,11 +17,14 @@ class BitcoinExchange
         // Vector to hold the exchange rate database
         std::vector<exchange_rate_row>  exchange_rates;
 
-        // function to read the exchange rate databse from a csv_file
-        void   parse_csv(const std::string &csv_file);
+        // vector to hold the input file data
+        std::vector<exchange_rate_row>  input_file_data;
+
+        // function to read the exchange rate databse from a input_file
+        void   parse_input(const std::string &input_file);
 
         // function to parse a single row of the csv file from a string
-        exchange_rate_row parse_csv_row(const std::string &csv_row);
+        exchange_rate_row parse_input_row(const std::string &input_row);
 
         // function to find the index of the closest date in the database
         int    find_closest_date(const std::string &date) const;
