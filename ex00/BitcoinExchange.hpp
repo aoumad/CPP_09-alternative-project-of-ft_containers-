@@ -3,8 +3,9 @@
 
 #include <string>
 #include <vector>
-#include <fstream.hpp>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 
 class BitcoinExchange
 {
@@ -13,6 +14,14 @@ class BitcoinExchange
         {
             std::string date;
             double      rate;
+        };
+
+        struct Compare_exchange_rate_rows
+        {
+            bool operator()(const exchange_rate_row &a, const exchange_rate_row &b)
+            {
+                return (a.date < b.date);
+            }
         };
         // Vector to hold the exchange rate database
         std::vector<exchange_rate_row>  exchange_rates;

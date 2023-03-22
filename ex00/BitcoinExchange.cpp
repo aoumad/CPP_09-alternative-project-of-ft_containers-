@@ -60,48 +60,66 @@ void BitcoinExchange::parse_csv_file(const std::string &csv_file)
     }
 }
 
-int BitcoinExchange::find_closest_date(const std::string& date) const
+// int BitcoinExchange::find_closest_date(const std::string &date) const
+// {
+//     int year, month, day;
+//     parse_date(date, year, month, day);
+//     int closest_index = 0;
+//     int closest_distance = 1000000;
+//     for (size_t i = 0; i < exchange_rates.size(); i++)
+//     {
+//         int year2, month2, day2;
+//         parse_date(exchange_rates[i].date, year2, month2, day2);
+//         int distance = abs(year - year2) * 365 + abs(month - month2) * 30 + abs(day - day2);
+//         if (distance < closest_distance)
+//         {
+//             closest_distance = distance;
+//             closest_index = i;
+//         }
+//     }
+//     return (closest_index);
+// }
+
+int BitcoinExchange::find_closest_date(const std::string &date) const
 {
-    // Convert the input date to a row with a dummy rate
-    exchange_rate_row search_row = { date, 0.0 };
+    // parse the input date using parse_date function
+    int year, month, day;
+    parse_date(date, year, month, day);
 
-    // Find the closest date using std::lower_bound
-    std::vector<exchange_rate_row>::const_iterator it =
-        std::lower_bound(exchange_rates.begin(), exchange_rates.end(), search_row,
-                         [](const exchange_rate_row& a, const exchange_rate_row& b) {
-                             return a.date < b.date;
-                         });
-
-    // If the date is not found or it's the first element, return 0
-    if (it == exchange_rates.end() || it == exchange_rates.begin())
+    // find the closest date using std::lower_bound;
+    std::vector<exchange_rate_row>::const_iterator it;
+    it = std::lower_bound(exchange_rates.begin(), exchange_rates.end(), search_row, Compare_exchange_rate_rows())
     {
-        return 0;
-    }
+        return (a.date < b.date);
+    });
 
+    // if the date is not found or it's the first element, return 0
+    if (it == exchange_rates.end() || it == exchange_rates.begin())
+        return (0);
+    
     // Check which element is closer to the search date
     std::vector<exchange_rate_row>::const_iterator prev_it = it - 1;
-    double diff1 = fabs(difftime(strptime(search_row.date.c_str(), "%Y-%m-%d", nullptr), strptime(prev_it->date.c_str(), "%Y-%m-%d", nullptr)));
-    double diff2 = fabs(difftime(strptime(search_row.date.c_str(), "%Y-%m-%d", nullptr), strptime(it->date.c_str(), "%Y-%m-%d", nullptr)));
+    int prev_year, prev_month, prev_day;
+
+    parse_date(prev_it->date, prev_year, prev_month, prev_day);
+    double diff1 = fabs(difftime(mktime(&tm{0,0,0,prev_day,prev_month-1,prev_year-1900}), mktime(&tm{0,0,0,day,month-1,year-1900})));
+    
+    int next_year, next_month , next_day;
+    parse_date(it->date, next_year, next_month, next_day);
+    double diff2 = fabs(difftime(mktime(&tm{0,0,0,next_day,next_month-1,next_year-1900}), mktime(&tm{0,0,0,day,month-1,year-1900})));
 
     if (diff1 < diff2)
-    {
-        return prev_it - exchange_rates.begin();
-    }
-    else
-    {
-        return it - exchange_rates.begin();
-    }
+        return (prev_it - exchange_rates.begin());
+    return (it - exchange_rates.begin());
 }
 
+void    BitcoinExchange::parse_date(const std::string &date, int &year, int &month, int &day) const
+{
+    struct std::tm timeinfo = {};
+    std::istringstream ss(date);
+    ss >> std::get_time(&timeinfo, "%Y-%m-%d");
 
-/*
-In the find_closest_date function, the line exchange_rate_row search_row = { date, 0.0 } is creating a new exchange_rate_row object named search_row, which is used to find the closest date to the input date.
-
-exchange_rate_row is a user-defined struct that contains two data members: date, which represents the date of the exchange rate, and rate, which represents the exchange rate on that date.
-
-So in the line of code in question, we are creating a new exchange_rate_row object and initializing its date member to the date input parameter and its rate member to 0.0.
-
-The purpose of initializing the rate member to 0.0 is to create a "dummy" row that can be used as a starting point for the search algorithm to find the closest date. This search_row object will be compared to the other rows in the exchange_rate_table to determine which row has the closest date to the input date.
-
-Essentially, the search_row object is a reference point for finding the closest date in the exchange_rate_table.
-*/
+    year = timeinfo.tm_year + 1900;
+    month = timeinfo.tm_mon + 1;
+    day = timeinfo.tm_mday;
+}
