@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aoumad <aoumad@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/03/22 15:47:02 by aoumad            #+#    #+#             */
+/*   Updated: 2023/03/22 15:48:12 by aoumad           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef BITCOINEXCHANGE_HPP
 #define BITCOINEXCHANGE_HPP
 
@@ -6,6 +18,8 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <cmath>
+#include <time.h>
 
 class BitcoinExchange
 {
