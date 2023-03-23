@@ -6,7 +6,7 @@
 /*   By: aoumad <aoumad@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 16:28:50 by aoumad            #+#    #+#             */
-/*   Updated: 2023/03/22 17:11:43 by aoumad           ###   ########.fr       */
+/*   Updated: 2023/03/23 14:13:53 by aoumad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,6 @@ class RPN
         ~RPN(void);
 
         RPN &operator=(RPN const &rhs);
-
-        void    push(double value);
-        void    pop(void);
-        void    dump(void);
-        void    assert_(double value);
-        void    add(void);
-        void    sub(void);
-        void    mul(void);
-        void    div(void);
-        void    print(void);
-        void    exit(void);
 };
 
 #endif
