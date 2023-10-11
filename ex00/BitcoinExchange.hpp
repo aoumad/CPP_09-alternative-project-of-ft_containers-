@@ -11,56 +11,40 @@
 /* ************************************************************************** */
 
 #ifndef BITCOINEXCHANGE_HPP
-#define BITCOINEXCHANGE_HPP
+# define BITCOINEXCHANGE_HPP
 
 #include <string>
-#include <vector>
-#include <fstream>
+#include <map>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <cmath>
 #include <time.h>
 
 class BitcoinExchange
 {
     private:
-        struct exchange_rate_row
-        {
-            std::string date;
-            double      rate;
-        };
+        std::map<std::string, float> _exchange_rates;
+        long    date_to_long(const std::string &date) const;
+        // double  _value;
+        // std::string _date;
+        vector<std::string> _date;
+        vector<double> _value;
+        double      _rtn_rate;
 
-        struct Compare_exchange_rate_rows
-        {
-            bool operator()(const exchange_rate_row &a, const exchange_rate_row &b)
-            {
-                return (a.date < b.date);
-            }
-        };
-        // Vector to hold the exchange rate database
-        std::vector<exchange_rate_row>  exchange_rates;
-
-        // vector to hold the input file data
-        std::vector<exchange_rate_row>  input_file_data;
-
-        // function to read the exchange rate databse from a input_file
-        void   parse_input(const std::string &input_file);
-
-        // function to parse a single row of the csv file from a string
-        exchange_rate_row parse_input_row(const std::string &input_row);
-
-        // function to find the index of the closest date in the database
-        int    find_closest_date(const std::string &date) const;
-
-        // function to parse a date string into a year, month and a day
-        void   parse_date(const std::string &date, int &year, int &month, int &day) const;
     public:
-        BitcoinExchange(const std::string &input_filename);
+        BitcoinExchange();
+        BitcoinExchange(std::string input_filename);
+        BitcoinExchange(const BitcoinExchange& input_filename);
         ~BitcoinExchange();
 
-        // function that takes a filename for a file containing dates and values
-        // and prints the value multiplied by the exchange rate for the closest date in the database
-        void    print_input_file(const std::string &input_filename);
-}
+        BitcoinExchange & operator=(const BitcoinExchange & rhs);
+
+        void    Input_checker(char *file);
+        int     is_valid_line(std::string line);
+        int     is_valid_date(std::string date);
+        int     is_valid_value(std::string value);
+        void    find_closest_date(int i);
+};
 
 #endif
