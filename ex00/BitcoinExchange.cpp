@@ -43,7 +43,7 @@ BitcoinExchange::BitcoinExchange(std::string input_filename)
     find_closest_date();
 }
 
-BitcoinExchange::Input_checker(const char *file)
+void    BitcoinExchange::Input_checker(const char *file)
 {
     std::ifstream fs(file);
     std::string date;
@@ -82,7 +82,7 @@ BitcoinExchange::Input_checker(const char *file)
     }
 }
 
-BitcoinExchange::is_valid_line(std::string line, int i)
+int BitcoinExchange::is_valid_line(std::string line, int i)
 {
     size_t index = line.find('|');
     if (index == std::string::npos || line.at(11) != "|" || index != line.rfind('|') || line.size() < 14)
@@ -106,7 +106,7 @@ BitcoinExchange::is_valid_line(std::string line, int i)
 }
 
 
-BitcoinExchange::is_valid_value(int i)
+int     BitcoinExchange::is_valid_value(int i)
 {
     int count = count(_value[i].begin(), _value[i].end(), '.');
 
@@ -135,7 +135,7 @@ BitcoinExchange::is_valid_value(int i)
     return (false);
 }
 
-BitcoinExchange::is_valid_date(int i)
+int    BitcoinExchange::is_valid_date(int i)
 {
     int day, month, year;
     char first_del, second_del;
@@ -215,4 +215,20 @@ void    find_accurate_date(int i) // Binary search approach
             it++;
     }
 
+}
+
+
+double  calculate_date_diff(std::string date1, std::string date2)
+{
+    int year1, month1, day1;
+    int year2, month2, day2;
+
+    sscanf(date1.c_str(), "%d-%d-%d", &year1, &month1, &day1); // int sscanf( const char* buffer, const char* format, ... );
+    sscanf(date2.c_str(), "%d-%d-%d", &year2, &month2, &day2);
+
+    // Calculating the abs diff
+    int days1 = (year1 * 365 + month1 * 30 + day1);
+    int days2 = (year2 * 365 + month2 * 30 + day2);
+
+    return (static_cast<double>std::abs(days1 - days2));
 }

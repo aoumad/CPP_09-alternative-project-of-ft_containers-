@@ -45,6 +45,7 @@ class BitcoinExchange
         int     is_valid_date(std::string date);
         int     is_valid_value(std::string value);
         void    find_closest_date(int i);
+        double  calculate_date_diff(std::string date1, std::string date2);
 };
 
 #endif
