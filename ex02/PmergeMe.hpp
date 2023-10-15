@@ -7,11 +7,19 @@
 #include <fstream>
 #include <cmath>
 #include <deque>
+#include <ctime>
 
 class PmergeMe
 {
     private:
-
+        int* numbers;
+        std::list<int> listContainer;
+        std::deque<int> dequeContainer;
+        clock_t deque_start_time;
+        clock_t list_start_time;
+        clock_t deque_end_time;
+        clock_t list_end_time;
+        int num_count;
 
     public:
     PmergeMe();
@@ -19,7 +27,9 @@ class PmergeMe
     PmergeMe &operator=(const PmergeMe &rhs);
     ~PmergeMe();
 
-    bool input_parsing(std::string s);
+    bool    input_parsing(std::string s);
+    void    fill_number_array(int count, char **argv);
+    void    fill_special_case(char **argv);
 }
 
 
