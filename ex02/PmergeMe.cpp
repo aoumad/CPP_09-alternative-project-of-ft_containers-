@@ -32,7 +32,8 @@ PmergeMe::PmergeMe(int count, char **argv)
     for (int i = 0; i < numbers.size(); i++)
         listContainer.push_back(numbers[i]);
 
-    listSort();
+    // here i will call the template function that will sort the list
+    sorting_container(numbers);
 
 }
 
@@ -151,4 +152,28 @@ void    PmergeMe::fill_special_case(char **argv)
 PmergeMe::~PmergeMe()
 {
     delete[] numbers;
+}
+
+template <typename Container>
+void    PmergeMe::sorting_container(Container &container, int *numbers)
+{
+    size_t size = container.size();
+    // std::container<std::pair<int, int>> pair_container;
+    Container pair_container;
+    typename Container::iterator it = container.begin();
+
+    // WSLT HNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+    if (size < 2)
+        return ; // nothing to sort
+    
+    int rem = size % 2;
+    int div = size / 2;
+    int i = 0;
+    while (div > 0)
+    {
+        pair_container.push_back(numbers[i], numbers[i + 1]);
+        i += 2;
+        div--;
+    }
 }

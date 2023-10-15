@@ -30,6 +30,7 @@ class PmergeMe
     bool    input_parsing(std::string s);
     void    fill_number_array(int count, char **argv);
     void    fill_special_case(char **argv);
+    void    sorting_container(Container &container, int *numbers);
 }
 
 
