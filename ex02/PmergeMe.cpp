@@ -177,10 +177,10 @@ void    PmergeMe::sorting_list(int *numbers)
 
     int first = 0;
     int second = 0;
-    for (int index = 0; index < pair_container.size(); i++)
+    for (int index = 0; index < pair_container.size(); index++)
     {
-        first = pair_container.at(index).first();
-        second = pair_container.at(index).second();
+        first = pair_container.at(index).first;
+        second = pair_container.at(index).second;
         if (first - second < 0 )
         {
             first = first + second;
@@ -227,3 +227,62 @@ void    PmergeMe::sorting_list(int *numbers)
 3- sort
 4- 
 */
+
+void PmergeMe::sorting_deque(std::deque<int> &dequeContainer)
+{
+    size_t size = dequeContainer.size();
+    std::deque<std::pair<int, int>> pair_container;
+
+    if (size < 2)
+        return; // nothing to sort;
+
+    int rem = size % 2;
+    int div = size / 2;
+    int i = 0;
+    while (div > 0) {
+        pair_container.push_back(std::make_pair(dequeContainer[i], dequeContainer[i + 1]));
+
+        div--;
+        i += 2;
+    }
+
+    int first = 0;
+    int second = 0;
+    for (int index = 0; index < pair_container.size(); index++)
+    {
+        first = pair_container.at(index).first;
+        second = pair_container.at(index).second;
+        if (first - second < 0)
+        {
+            first = first + second;
+            second = first - second;
+            first = first - second;
+        }
+    }
+
+    // Sort the pair_container based on their first number using insertion sort
+    for (std::deque<std::pair<int, int>>::iterator it = pair_container.begin(); it != pair_container.end(); ++it) {
+        int first_num = it->first;
+        int second_num = it->second;
+        std::deque<std::pair<int, int>>::iterator insertion_point = it;
+
+        while (insertion_point != pair_container.begin() && first_num < (--insertion_point)->first) {
+            // Move the iterator back and swap the elements
+            std::pair<int, int>& prev = *insertion_point;
+            insertion_point++;
+            prev.first = first_num;
+            prev.second = second_num;
+        }
+    }
+
+    // Split the pairs into main chain and pend chain
+    std::deque<int> first_chain;
+    std::deque<int> second_chain;
+    for (std::deque<std::pair<int, int>>::iterator it = pair_container.begin(); it != pair_container.end(); ++it) {
+        first_chain.push_back(it->first);
+        second_chain.push_back(it->second);
+    }
+
+    // need to implement the algo
+
+}

@@ -31,7 +31,7 @@ class PmergeMe
     void    fill_number_array(int count, char **argv);
     void    fill_special_case(char **argv);
     void    sorting_list(int *numbers);
-    void    sorting_deque(int *numbers);
+    void    sorting_deque(std::deque<int>& dequeContainer);
 }
 
 
