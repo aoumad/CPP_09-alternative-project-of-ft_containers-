@@ -33,7 +33,7 @@ PmergeMe::PmergeMe(int count, char **argv)
         listContainer.push_back(numbers[i]);
 
     // here i will call the template function that will sort the list
-    sorting_container(numbers);
+    sorting_list(numbers);
 
 }
 
@@ -154,26 +154,76 @@ PmergeMe::~PmergeMe()
     delete[] numbers;
 }
 
-template <typename Container>
-void    PmergeMe::sorting_container(Container &container, int *numbers)
-{
-    size_t size = container.size();
-    // std::container<std::pair<int, int>> pair_container;
-    Container pair_container;
-    typename Container::iterator it = container.begin();
 
-    // WSLT HNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+void    PmergeMe::sorting_list(int *numbers)
+{
+    size_t size = listContainer.size();
+    std::list<std::pair<int, int>> pair_container;
 
     if (size < 2)
-        return ; // nothing to sort
-    
+        return ; // nothing to sort;
+
     int rem = size % 2;
     int div = size / 2;
     int i = 0;
     while (div > 0)
     {
-        pair_container.push_back(numbers[i], numbers[i + 1]);
-        i += 2;
+        pair_container.push_back(std::make_pair(numbers[i], numbers[i + 1]));
+
         div--;
+        i += 2;
     }
+
+    int first = 0;
+    int second = 0;
+    for (int index = 0; index < pair_container.size(); i++)
+    {
+        first = pair_container.at(index).first();
+        second = pair_container.at(index).second();
+        if (first - second < 0 )
+        {
+            first = first + second;
+            second = first - second;
+            first = first - second;
+        }
+    }
+
+    // Sort the pair_container based on their first number using insertion sort
+    for (std::list<std::pair<int, int>>::iterator it = pair_container.begin(); it != pair_container.end(); ++it)
+    {
+        int first_num = it->first;
+        int second_num = it->second;
+        std::list<std::pair<int, int>::iterator insertion_point = it;
+
+        while (insertion_point != pair_container.begin() && first_num < (--insertion_point)->first)
+        {
+            // Move the iterator back and swap the elements
+            std::pair<int, int>& prev = *insertion_point;
+            insertion_point++;
+            prev.first = first_num;
+            prev.second = second_num;
+        }
+    }
+
+    // split the pairs into main chain and pend chain
+    std::list<int> first_chain;
+    std::list<int> second_chain;
+    for (int k = 0; k < pair_container.size(); k++)
+    {
+        first_chain.assign(pair_container[k].first);
+        if (k > 0)
+            second_chain.assign(pair_container[k].second);
+    }
+    first_chain.insert(first_chain.begin(), pair_container[0].second);
+
+    // need to implement the algo
+    
 }
+
+/*
+1- create the pair
+2- sort the pair
+3- sort
+4- 
+*/

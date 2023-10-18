@@ -23,6 +23,7 @@ class RPN
 {
     private:
         std::stack<double>  _stack;
+        long                _res;
     
     public:
         RPN(void);
@@ -30,6 +31,7 @@ class RPN
         ~RPN(void);
 
         RPN &operator=(RPN const &rhs);
+        void    calc(std::string input);
 };
 
 #endif
