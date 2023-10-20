@@ -4,6 +4,7 @@ PmergeMe::PmergeMe(int count, char **argv)
 {
     std::string s;
     numbers = new int[count - 1];
+    jacobsthal = new int[0];
     num_count = 0;
 
     if (count < 2)
@@ -219,6 +220,27 @@ void    PmergeMe::sorting_list(int *numbers)
 
     // need to implement the algo
     
+    // filling the jacobsthal list according to second chain size
+    size_t second_chain_size = second.chain.size();
+    size_t starting_index = 3;
+    size_t rtn_jcb = get_jcb_nbr(starting_index);
+    
+    while (rtn_jcb < second_chain_size - 1)
+    {
+        this->jacobsthal_list.assign(rtn_jcb);
+        rtn_jcb = get_jcb_nbr(++starting_index);
+    }
+}
+
+size_t  PmergeMe::get_jcb_nbr(int index)
+{
+    if (index == 0)
+        return (0);
+
+    if (index == 1)
+        return (1);
+
+    return (rtn_jcb_nbr(n - 1) + 2 * rtn_jcb_nbr(n - 2));
 }
 
 /*

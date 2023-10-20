@@ -21,6 +21,8 @@ class PmergeMe
         clock_t list_end_time;
         int num_count;
 
+        std::list<int> jacobsthal_list;
+
     public:
     PmergeMe();
     PmergeMe(int count, char **argv);
@@ -32,6 +34,7 @@ class PmergeMe
     void    fill_special_case(char **argv);
     void    sorting_list(int *numbers);
     void    sorting_deque(std::deque<int>& dequeContainer);
+    size_t  get_jcb_nbr(int index);
 }
 
 
