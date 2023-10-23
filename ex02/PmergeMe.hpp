@@ -8,11 +8,13 @@
 #include <cmath>
 #include <deque>
 #include <ctime>
+#include <vector>
 
 class PmergeMe
 {
     private:
-        int* numbers;
+        std::vector<int> numbers;
+        int nbr_length;
         std::list<int> listContainer;
         std::deque<int> dequeContainer;
         clock_t deque_start_time;
@@ -29,13 +31,12 @@ class PmergeMe
     PmergeMe &operator=(const PmergeMe &rhs);
     ~PmergeMe();
 
-    bool    input_parsing(std::string s);
-    void    fill_number_array(int count, char **argv);
-    void    fill_special_case(char **argv);
-    void    sorting_list(int *numbers);
-    void    sorting_deque(std::deque<int>& dequeContainer);
+    bool    input_parsing(std::string s, int index);
+    void    sorting_list();
+    void    sorting_deque();
     size_t  get_jcb_nbr(int index);
-}
+    void    insert_second_chain(std::list<int> &first_chain, std::list<int> &second_chain);
+};
 
 
 
