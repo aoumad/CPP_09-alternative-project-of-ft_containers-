@@ -31,7 +31,7 @@ class PmergeMe
     PmergeMe &operator=(const PmergeMe &rhs);
     ~PmergeMe();
 
-    bool    input_parsing(std::string s, int index);
+    bool    input_parsing(std::string s);
     void    sorting_list();
     void    sorting_deque();
     size_t  get_jcb_nbr(int index);
