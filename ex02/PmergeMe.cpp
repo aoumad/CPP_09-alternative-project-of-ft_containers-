@@ -4,7 +4,7 @@ PmergeMe::PmergeMe(int count, char **argv)
 {
     std::string s;
     numbers = std::vector<int>(100000);
-    // nbr_length = count - 1;
+    nbr_length = 0;
     num_count = 0;
 
     if (count < 2)
@@ -59,8 +59,8 @@ PmergeMe::PmergeMe(int count, char **argv)
         dequeContainer.push_back(numbers[i]);
     // here i will call the template function that will sort the deque
     sorting_deque();
-    deque_end_time = clock();
-    std::cout << "Time to process a range of " << count - 1  << "elements with std::deque: " << (float)(deque_end_time - deque_start_time) * 1000 / CLOCKS_PER_SEC << " seconds" << std::endl;
+    // deque_end_time = clock();
+    // std::cout << "Time to process a range of " << count - 1  << "elements with std::deque: " << (float)(deque_end_time - deque_start_time) * 1000 / CLOCKS_PER_SEC << " seconds" << std::endl;
 }
 
 PmergeMe::~PmergeMe()
@@ -76,7 +76,6 @@ bool    PmergeMe::input_parsing(std::string s)
     size_t pos = 0;
     std::string token;
     long num;
-    
     // check if the string has a space and contains multiple numbers inside it
     if (s.find(delimiter) != std::string::npos)
     {
@@ -120,8 +119,8 @@ bool    PmergeMe::input_parsing(std::string s)
         std::cerr << "Error" << std::endl;
         return (false);
     }
+
     numbers[nbr_length] = (int)num;
-    // std::cout << "num : " << numbers[nbr_length] << std::endl;
     nbr_length++;
     return (true);
 }
@@ -459,9 +458,9 @@ void    PmergeMe::sorting_deque()
     }
 
     // priting the pairs
-    for (std::deque<std::pair<int, int> >::iterator it = pair_container.begin(); it != pair_container.end(); ++it)
-        std::cout << it->first << " " << it->second << std::endl;
-    
+    // for (std::deque<std::pair<int, int> >::iterator it = pair_container.begin(); it != pair_container.end(); ++it)
+    //     std::cout << it->first << " " << it->second << std::endl;
+
     int first = 0;
     int second = 0;
     std::deque<std::pair<int, int> >::iterator it_pair = pair_container.begin();
@@ -481,9 +480,85 @@ void    PmergeMe::sorting_deque()
     }
 
     // print the pairs and check if they are sorted
-    for (std::deque<std::pair<int, int> >::iterator ites = pair_container.begin(); ites != pair_container.end(); ++ites)
-        std::cout << ites->first << " " << ites->second << std::endl;
+    // for (std::deque<std::pair<int, int> >::iterator ites = pair_container.begin(); ites != pair_container.end(); ++ites)
+    //     std::cout << ites->first << " " << ites->second << std::endl;
     
     // // Sort the pair_container based on their first number using insertion sort
+    for (int i = 0; i < (int)pair_container.size(); ++i)
+    {
+        int first_num = pair_container[i].first;
+        int second_num = pair_container[i].second;
+        int insertion_point = i;
 
+        // find the correct position for the current pair
+        while (insertion_point > 0 && first_num < (int)pair_container[insertion_point - 1].first)
+        {
+            // Swap the elements
+            pair_container[insertion_point].first = pair_container[insertion_point - 1].first;
+            pair_container[insertion_point].second = pair_container[insertion_point - 1].second;
+            --insertion_point; // Move the insertion point to the left
+        }
+
+        // Insert the current pair at the correct position
+        pair_container[insertion_point].first = first_num;
+        pair_container[insertion_point].second = second_num;
+    }
+
+    // print the pairs and check if they are sorted
+    // std::cout << "\nprint the pairs and check if they are sorted" << std::endl;
+    // for (std::deque<std::pair<int, int> >::iterator ites = pair_container.begin(); ites != pair_container.end(); ++ites)
+    //     std::cout << ites->first << " " << ites->second << std::endl << std::endl;
+
+    // split the pairs into main chain and pend chain
+    std::deque<int> first_chain;
+    std::deque<int> second_chain;
+    for (size_t i = 0; i < (size_t)pair_container.size(); i++)
+    {
+        first_chain.push_back(pair_container[i].first);
+        second_chain.push_back(pair_container[i].second);
+    }
+
+    // print the first chain and second chain
+    // std::cout << "first chain: ";
+    // for (std::deque<int>::iterator it = first_chain.begin(); it != first_chain.end(); ++it)
+    //     std::cout << *it << " ";
+    // std::cout << std::endl;
+    
+    // std::cout << "\nsecond chain: ";
+    // for (std::deque<int>::iterator it = second_chain.begin(); it != second_chain.end(); ++it)
+    //     std::cout << *it << " ";
+    // std::cout << std::endl;
+
+    // need to implement the algo
+    std::deque<int> jacobsthal_deque;
+    int second_chain_size = second_chain.size();
+    std::cout << "second chain size: " << second_chain_size << std::endl;
+    int a = 1;
+    int b = 1;
+    int c;
+    int flag = 2;
+    // while ((c = a + 2 * b) <= second_chain_size)
+    for (int i = 0; i < second_chain_size; i++)
+    {
+        c = b + (2 * a);
+        std::cout << "c: " << c << std::endl;
+        jacobsthal_deque.push_back(c);
+        // 3 2 5 4 11 10 9 8 7 6
+        // after pushing a jacob sequence starting from number 3 we need to push the rest of the numbers
+        // 3 2 5 4 11 10 9 8 7 6
+        for (int j = c - 1; j >= flag; j--)
+        {
+            if (std::find(jacobsthal_deque.begin(), jacobsthal_deque.end(), j) == jacobsthal_deque.end())
+                jacobsthal_deque.push_back(j);
+        }
+        a = b;
+        b = c;
+        flag = c;
+    }
+
+    // print the jacobsthal deque
+    std::cout << "\njacobsthal deque: ";
+    for (int i = 0; i < (int)jacobsthal_deque.size(); i++)
+        std::cout << jacobsthal_deque[i] << " ";
+    std::cout << std::endl;
 }
