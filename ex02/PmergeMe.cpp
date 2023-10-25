@@ -25,24 +25,24 @@ PmergeMe::PmergeMe(int count, char **argv)
             std::cout << argv[i] << " ";
         std::cout << std::endl;
     }
-    std::cout << "NUMBER LENGTH: " << nbr_length << std::endl;
+    // std::cout << "NUMBER LENGTH: " << nbr_length << std::endl;
     listContainer = std::list<int>(nbr_length + 5);
     listContainer.clear();
     // list Container sorting
     list_start_time = clock();
     // print the number array
-    std::cout << "numbers array: ";
-    for (int i = 0; i < nbr_length; i++)
-        std::cout << numbers[i] << " ";
-    std::cout << std::endl;
+    // std::cout << "numbers array: ";
+    // for (int i = 0; i < nbr_length; i++)
+    //     std::cout << numbers[i] << " ";
+    // std::cout << std::endl;
     for (int i = 0; i < nbr_length; i++)
         listContainer.push_back(numbers[i]);
 
         // print firstly the listContainer
-    std::cout << "list container:";
-    for (std::list<int>::iterator it = listContainer.begin(); it != listContainer.end(); ++it)
-        std::cout << *it << " ";
-    std::cout << std::endl;
+    // std::cout << "list container:";
+    // for (std::list<int>::iterator it = listContainer.begin(); it != listContainer.end(); ++it)
+    //     std::cout << *it << " ";
+    // std::cout << std::endl;
     // // here i will call the template function that will sort the list
     sorting_list();
     list_end_time = clock();
@@ -51,7 +51,7 @@ PmergeMe::PmergeMe(int count, char **argv)
         std::cout << *it << " ";
     std::cout << std::endl;
 
-    std::cout << "Time to process a range of " << count - 1  << "elements with std::list: " << (float)(list_end_time - list_start_time) * 1000 / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << "Time to process a range of " << nbr_length << " elements with std::list: " << (float)(list_end_time - list_start_time) * 1000 / CLOCKS_PER_SEC << " seconds" << std::endl;
 
     // deque Container sorting
     deque_start_time = clock();
@@ -59,8 +59,8 @@ PmergeMe::PmergeMe(int count, char **argv)
         dequeContainer.push_back(numbers[i]);
     // here i will call the template function that will sort the deque
     sorting_deque();
-    // deque_end_time = clock();
-    // std::cout << "Time to process a range of " << count - 1  << "elements with std::deque: " << (float)(deque_end_time - deque_start_time) * 1000 / CLOCKS_PER_SEC << " seconds" << std::endl;
+    deque_end_time = clock();
+    std::cout << "Time to process a range of " << nbr_length << " elements with std::deque: " << (float)(deque_end_time - deque_start_time) * 1000 / CLOCKS_PER_SEC << " seconds" << std::endl;
 }
 
 PmergeMe::~PmergeMe()
@@ -239,15 +239,15 @@ void    PmergeMe::sorting_list()
     // first_chain.push_front(pair_container.begin()->second);
 
     // print the first chain and second chain
-    std::cout << "first chain: ";
-    for (std::list<int>::iterator it = first_chain.begin(); it != first_chain.end(); ++it)
-        std::cout << *it << " ";
-    std::cout << std::endl;
+    // std::cout << "first chain: ";
+    // for (std::list<int>::iterator it = first_chain.begin(); it != first_chain.end(); ++it)
+    //     std::cout << *it << " ";
+    // std::cout << std::endl;
 
-    std::cout << "\nsecond chain: ";
-    for (std::list<int>::iterator it = second_chain.begin(); it != second_chain.end(); ++it)
-        std::cout << *it << " ";
-    std::cout << std::endl;
+    // std::cout << "\nsecond chain: ";
+    // for (std::list<int>::iterator it = second_chain.begin(); it != second_chain.end(); ++it)
+    //     std::cout << *it << " ";
+    // std::cout << std::endl;
 
     // need to implement the algo
     
@@ -388,7 +388,7 @@ void PmergeMe::insert_second_chain(std::list<int> &first_chain, std::list<int> &
     std::list<int>::iterator it_second_chain;
     std::list<int>::iterator it_first_chain;
 
-    std::cout << std::endl;
+    // std::cout << std::endl;
     while (it_jcb != jacobsthal_list_copy.end())
     {
         size_t jcb_element = *it_jcb - 1;
@@ -532,20 +532,15 @@ void    PmergeMe::sorting_deque()
     // need to implement the algo
     std::deque<int> jacobsthal_deque;
     int second_chain_size = second_chain.size();
-    std::cout << "second chain size: " << second_chain_size << std::endl;
+    // std::cout << "second chain size: " << second_chain_size << std::endl;
     int a = 1;
     int b = 1;
     int c;
     int flag = 2;
-    // while ((c = a + 2 * b) <= second_chain_size)
     for (int i = 0; i < second_chain_size; i++)
     {
         c = b + (2 * a);
-        std::cout << "c: " << c << std::endl;
         jacobsthal_deque.push_back(c);
-        // 3 2 5 4 11 10 9 8 7 6
-        // after pushing a jacob sequence starting from number 3 we need to push the rest of the numbers
-        // 3 2 5 4 11 10 9 8 7 6
         for (int j = c - 1; j >= flag; j--)
         {
             if (std::find(jacobsthal_deque.begin(), jacobsthal_deque.end(), j) == jacobsthal_deque.end())
@@ -557,8 +552,59 @@ void    PmergeMe::sorting_deque()
     }
 
     // print the jacobsthal deque
-    std::cout << "\njacobsthal deque: ";
-    for (int i = 0; i < (int)jacobsthal_deque.size(); i++)
-        std::cout << jacobsthal_deque[i] << " ";
-    std::cout << std::endl;
+    // std::cout << "\njacobsthal deque: ";
+    // for (int i = 0; i < (int)jacobsthal_deque.size(); i++)
+    //     std::cout << jacobsthal_deque[i] << " ";
+    // std::cout << std::endl;
+
+    // using binary search to insert the second chain elements into the first chain in the right place
+    // iterate through the jacobsthal_list.size()
+
+    insert_second_chain_deque(first_chain, second_chain, jacobsthal_deque);
+    dequeContainer.clear();
+    dequeContainer = first_chain;
+}
+
+void    PmergeMe::insert_second_chain_deque(std::deque<int> &first_chain, std::deque<int> &second_chain, std::deque<int> &jacobsthal_deque)
+{
+    // using benefits of deque list and binary search to make it faster
+    std::vector<int> dp(second_chain.size(), false);
+    if (second_chain.empty() || jacobsthal_deque.empty())
+        return ;
+    std::deque<int>::iterator it_jcb = jacobsthal_deque.begin();
+    std::deque<int>::iterator it_second_chain;
+    std::deque<int>::iterator it_first_chain;
+    int jcb_element;
+
+    while (it_jcb != jacobsthal_deque.end())
+    {
+        jcb_element = *it_jcb - 1;
+        it_second_chain = second_chain.begin();
+        for (int i = 0; i < jcb_element; i++)
+        {
+            ++it_second_chain;
+            if (it_second_chain == second_chain.end())
+                it_second_chain = second_chain.begin();
+        }
+        it_first_chain = first_chain.begin();
+        while (it_first_chain != first_chain.end())
+        {
+            if (dp[jcb_element % second_chain.size()] == true)
+                break;
+            if (*it_first_chain > *it_second_chain)
+            {
+                first_chain.insert(it_first_chain, *it_second_chain);
+                dp[jcb_element % second_chain.size()] = true;
+                break;
+            }
+            ++it_first_chain;
+        }
+        ++it_jcb;
+    }
+
+    // print the first chain
+    // std::cout << "first chain after: ";
+    // for (std::deque<int>::iterator it = first_chain.begin(); it != first_chain.end(); ++it)
+    //     std::cout << *it << " ";
+    // std::cout << std::endl;
 }

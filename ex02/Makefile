@@ -4,7 +4,8 @@ SRC		=	PmergeMe.cpp main.cpp
 
 CC 		= c++
 
-FLAGS	= -std=c++98 -Wall -Wextra -Werror 
+SANITIZE = -fsanitize=address
+FLAGS = -std=c++98 -Wall -Wextra -Werror -g $(SANITIZE)
 
 OBJS 	= $(SRC:.c=.o)
 

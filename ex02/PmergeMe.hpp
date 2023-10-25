@@ -24,6 +24,7 @@ class PmergeMe
         int num_count;
 
         std::list<int> jacobsthal_list;
+        std::deque<int> jacobsthal_deque;
 
     public:
     PmergeMe();
@@ -36,6 +37,7 @@ class PmergeMe
     void    sorting_deque();
     size_t  get_jcb_nbr(int index);
     void    insert_second_chain(std::list<int> &first_chain, std::list<int> &second_chain);
+    void    insert_second_chain_deque(std::deque<int> &first_chain, std::deque<int> &second_chain, std::deque<int> &jacobsthal_deque);
 };
 
 
