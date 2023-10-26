@@ -66,10 +66,10 @@ void    RPN::calc(std::string input)
                     this->_stack.push(op1 + op2);
                     break;
                 case '-':
-                    st.push(op1 - op2);
+                    _stack.push(op1 - op2);
                     break;
                 case '*':
-                    st.push(op1 * op2);
+                    _stack.push(op1 * op2);
                     break;
                 case '/':
                     if (op2 == 0)
@@ -83,7 +83,7 @@ void    RPN::calc(std::string input)
         }
         else
         {
-            std::cerr << "Error: Invalid input" << std::endl;
+            std::cerr << "Error" << std::endl;
             exit(1);
         }
     }
@@ -94,4 +94,8 @@ void    RPN::calc(std::string input)
         std::cerr << "caution: it might be the last argument is a number and not an operator" << std::endl;
         exit(1);
     }
+
+    this->_res = this->_stack.top();
+    this->_stack.pop();
+    std::cout << this->_res << std::endl;
 }

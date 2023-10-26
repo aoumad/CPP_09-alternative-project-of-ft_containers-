@@ -20,21 +20,24 @@
 #include <fstream>
 #include <cmath>
 #include <time.h>
+#include <vector>
+#include <iomanip>
 
 class BitcoinExchange
 {
     private:
-        std::map<std::string, float> _exchange_rates;
+        std::map<std::string, double> _exchange_rates;
+        std::vector<std::string> _rtn_rates;
         long    date_to_long(const std::string &date) const;
         // double  _value;
-        // std::string _date;
-        vector<std::string> _date;
-        vector<double> _value;
+        std::string _closest_date;
+        std::vector<std::string> _date;
+        std::vector<double> _value;
         double      _rtn_rate;
 
     public:
         BitcoinExchange();
-        BitcoinExchange(std::string input_filename);
+        BitcoinExchange(char *input_filename);
         BitcoinExchange(const BitcoinExchange& input_filename);
         ~BitcoinExchange();
 
@@ -44,8 +47,10 @@ class BitcoinExchange
         int     is_valid_line(std::string line);
         int     is_valid_date(std::string date);
         int     is_valid_value(std::string value);
-        void    find_closest_date(int i);
+        void    find_accurate_date();
         double  calculate_date_diff(std::string date1, std::string date2);
+        void    fill_the_map();
+        void    generate_report();
 };
 
 #endif

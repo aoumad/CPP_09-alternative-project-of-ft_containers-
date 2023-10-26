@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "bitcoinexchange.hpp"
+#include "BitcoinExchange.hpp"
 
 int main(int argc, char **argv)
 {
@@ -19,6 +19,5 @@ int main(int argc, char **argv)
         std::cout << "Error: could not open file." << std::endl;
         return (1);
     }
-    std::string filename = argv[1];
-    BitcoinExchange bitcoin(filename);
+    BitcoinExchange bitcoin(argv[1]);
 }
