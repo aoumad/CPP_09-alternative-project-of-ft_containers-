@@ -3,7 +3,7 @@
 PmergeMe::PmergeMe(int count, char **argv)
 {
     std::string s;
-    numbers = std::vector<int>(100000);
+    numbers = std::vector<int>(10000000);
     nbr_length = 0;
     num_count = 0;
 
@@ -51,7 +51,7 @@ PmergeMe::PmergeMe(int count, char **argv)
         std::cout << *it << " ";
     std::cout << std::endl;
 
-    std::cout << "Time to process a range of " << nbr_length << " elements with std::list: " << (float)(list_end_time - list_start_time) * 1000 / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << "Time to process a range of " << nbr_length << " elements with std::list: " << (float)(list_end_time - list_start_time) * 1000 / CLOCKS_PER_SEC << " sec" << std::endl;
 
     // deque Container sorting
     deque_start_time = clock();
@@ -60,7 +60,7 @@ PmergeMe::PmergeMe(int count, char **argv)
     // here i will call the template function that will sort the deque
     sorting_deque();
     deque_end_time = clock();
-    std::cout << "Time to process a range of " << nbr_length << " elements with std::deque: " << (float)(deque_end_time - deque_start_time) * 1000 / CLOCKS_PER_SEC << " seconds" << std::endl;
+    std::cout << "Time to process a range of " << nbr_length << " elements with std::deque: " << (float)(deque_end_time - deque_start_time) * 1000 / CLOCKS_PER_SEC << " sec" << std::endl;
 }
 
 PmergeMe::~PmergeMe()
@@ -254,6 +254,7 @@ void    PmergeMe::sorting_list()
     // filling the jacobsthal list according to second chain size starting from 3
 
     size_t second_chain_size = second_chain.size();
+    size_t a = 1;
     size_t starting_index = 3;
     size_t rtn_jcb;
     for (size_t i = 0; i < second_chain_size - 1; i++)
@@ -263,11 +264,16 @@ void    PmergeMe::sorting_list()
     
         while (rtn_jcb > 2)
         {
+                        // std::cout << "hello" << std::endl;
             rtn_jcb--;
             if (std::find(jacobsthal_list.begin(), jacobsthal_list.end(), rtn_jcb) == jacobsthal_list.end())
                 jacobsthal_list.push_back(rtn_jcb);
+            if (++a >= second_chain_size * 2)
+                break;
         }
         starting_index++;
+        if (a >= second_chain_size * 2)
+            break;
     }
 
     // print the jacobsthal list
@@ -380,15 +386,17 @@ size_t  PmergeMe::get_jcb_nbr(int index)
 //         // std::cout << "______________" << std::endl;
 //     }
 // }
+
 void PmergeMe::insert_second_chain(std::list<int> &first_chain, std::list<int> &second_chain)
 {
     std::list<int> jacobsthal_list_copy = jacobsthal_list;
     std::list<int>::iterator it_jcb = jacobsthal_list_copy.begin();
-    std::vector<bool> second_chain_inserted(second_chain.size(), false);
+    const size_t dp_size = second_chain.size();
+    bool second_chain_inserted[dp_size] = {false}; // Initialize a simple array
+
     std::list<int>::iterator it_second_chain;
     std::list<int>::iterator it_first_chain;
 
-    // std::cout << std::endl;
     while (it_jcb != jacobsthal_list_copy.end())
     {
         size_t jcb_element = *it_jcb - 1;
@@ -401,31 +409,24 @@ void PmergeMe::insert_second_chain(std::list<int> &first_chain, std::list<int> &
                 it_second_chain = second_chain.begin();
         }
         it_first_chain = first_chain.begin();
-        // std::cout << "______________" << std::endl;
-        //     std::cout << "dp value: " << second_chain_inserted[jcb_element % second_chain.size()] << std::endl;
+
         while (it_first_chain != first_chain.end())
         {
-            if (second_chain_inserted[jcb_element % second_chain.size()] == true)
-                break;
+            if (!second_chain_inserted[jcb_element % dp_size])
+            {
+                second_chain_inserted[jcb_element % dp_size] = true;
+            }
+
             if (*it_first_chain > *it_second_chain)
             {
-                // std::cout << "dkhlaaat" << std::endl;
                 first_chain.insert(it_first_chain, *it_second_chain);
-                second_chain_inserted[jcb_element % second_chain.size()] = true;
                 break;
             }
             ++it_first_chain;
         }
         ++it_jcb;
-        //         std::cout << "printing the first chaine: " << std::endl;
-        // for (std::list<int>::iterator it = first_chain.begin(); it != first_chain.end(); ++it)
-        //     std::cout << *it << " ";
-        // std::cout << std::endl;
-        // std::cout << "number inserted: " << *it_second_chain << std::endl;
     }
 }
-
-
 
 
 
@@ -537,6 +538,7 @@ void    PmergeMe::sorting_deque()
     int b = 1;
     int c;
     int flag = 2;
+    int k = 1;
     for (int i = 0; i < second_chain_size; i++)
     {
         c = b + (2 * a);
@@ -545,10 +547,14 @@ void    PmergeMe::sorting_deque()
         {
             if (std::find(jacobsthal_deque.begin(), jacobsthal_deque.end(), j) == jacobsthal_deque.end())
                 jacobsthal_deque.push_back(j);
+            if (++k >= second_chain_size * 2)
+                break;
         }
         a = b;
         b = c;
         flag = c;
+        if (k >= second_chain_size * 2)
+            break;
     }
 
     // print the jacobsthal deque
@@ -565,12 +571,14 @@ void    PmergeMe::sorting_deque()
     dequeContainer = first_chain;
 }
 
-void    PmergeMe::insert_second_chain_deque(std::deque<int> &first_chain, std::deque<int> &second_chain, std::deque<int> &jacobsthal_deque)
+void PmergeMe::insert_second_chain_deque(std::deque<int> &first_chain, std::deque<int> &second_chain, std::deque<int> &jacobsthal_deque)
 {
     // using benefits of deque list and binary search to make it faster
-    std::vector<int> dp(second_chain.size(), false);
+    std::deque<int> dp(second_chain.size(), false);
+
     if (second_chain.empty() || jacobsthal_deque.empty())
         return ;
+
     std::deque<int>::iterator it_jcb = jacobsthal_deque.begin();
     std::deque<int>::iterator it_second_chain;
     std::deque<int>::iterator it_first_chain;
@@ -580,13 +588,16 @@ void    PmergeMe::insert_second_chain_deque(std::deque<int> &first_chain, std::d
     {
         jcb_element = *it_jcb - 1;
         it_second_chain = second_chain.begin();
+
         for (int i = 0; i < jcb_element; i++)
         {
             ++it_second_chain;
             if (it_second_chain == second_chain.end())
                 it_second_chain = second_chain.begin();
         }
+
         it_first_chain = first_chain.begin();
+
         while (it_first_chain != first_chain.end())
         {
             if (dp[jcb_element % second_chain.size()] == true)
@@ -603,8 +614,8 @@ void    PmergeMe::insert_second_chain_deque(std::deque<int> &first_chain, std::d
     }
 
     // print the first chain
-    // std::cout << "first chain after: ";
-    // for (std::deque<int>::iterator it = first_chain.begin(); it != first_chain.end(); ++it)
-    //     std::cout << *it << " ";
-    // std::cout << std::endl;
+    std::cout << "first chain after: ";
+    for (std::deque<int>::iterator it = first_chain.begin(); it != first_chain.end(); ++it)
+        std::cout << *it << " ";
+    std::cout << std::endl;
 }
