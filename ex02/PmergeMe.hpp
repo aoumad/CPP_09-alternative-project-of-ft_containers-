@@ -40,6 +40,4 @@ class PmergeMe
     void    insert_second_chain_deque(std::deque<int> &first_chain, std::deque<int> &second_chain, std::deque<int> &jacobsthal_deque);
 };
 
-
-
 #endif

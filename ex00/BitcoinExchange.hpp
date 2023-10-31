@@ -6,7 +6,7 @@
 /*   By: aoumad <abderazzakoumad@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 15:47:02 by aoumad            #+#    #+#             */
-/*   Updated: 2023/10/30 23:39:36 by aoumad           ###   ########.fr       */
+/*   Updated: 2023/10/31 22:02:05 by aoumad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 #include <fstream>
 #include <cmath>
 #include <time.h>
-#include <vector>
 #include <iomanip>
+#include<unistd.h> 
 static double _rtn_rates_index = 0;
 
 class BitcoinExchange
@@ -29,14 +29,12 @@ class BitcoinExchange
     private:
         std::map<std::string, double> _exchange_rates;
         long    date_to_long(const std::string &date) const;
-        // static double _rtn_rates_index;
-        // double  _value;
         std::string _closest_date;
-        std::vector<std::string> _date;
-        std::vector<double> _value;
         std::map<std::string, double> _map;
         std::map<double, std::string> _rtn_rates;
         double      _rtn_rate;
+        std::string _curr_date;
+        double      _curr_value;
 
     public:
         BitcoinExchange();

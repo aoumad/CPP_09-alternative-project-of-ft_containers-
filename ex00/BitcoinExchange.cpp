@@ -6,7 +6,7 @@
 /*   By: aoumad <abderazzakoumad@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 15:47:10 by aoumad            #+#    #+#             */
-/*   Updated: 2023/10/30 23:49:02 by aoumad           ###   ########.fr       */
+/*   Updated: 2023/10/31 22:22:48 by aoumad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,8 @@ BitcoinExchange::BitcoinExchange(char *input_filename)
 {
     try
     {
-        // _rtn_rates_index = 0;
         fill_the_map();
         Input_checker(input_filename);
-        // print the _rtn_rates map value which is a string
-        // the i represents the key of the map
         for (size_t i = 0; i < _rtn_rates_index; i++)
         {
             std::map<double, std::string>::iterator it = this->_rtn_rates.find(i);
@@ -51,6 +48,7 @@ int BitcoinExchange::is_valid_date(std::string date)
         || day < 1 || day > 31 || month < 1 || month > 12 || year < 0)
     {
         this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: bad input => " + date));
+        _curr_date = "false";
         return (false);
     }
 
@@ -66,6 +64,7 @@ int BitcoinExchange::is_valid_date(std::string date)
     ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30))
     {
         this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: bad input => " + date));
+        _curr_date = "false";
         return (false);
     }
 
@@ -76,14 +75,13 @@ int BitcoinExchange::is_valid_date(std::string date)
     In a leap year, an extra day is added to the calendar, making it 366 days in total.
     This extra day is added to the end of February, resulting in February having 29 days instead of the usual 28.
     */
-return (true);
+    _curr_date = date;
+    return (true);
 }
 
 void    BitcoinExchange::find_accurate_date()
 {
-    std::map<std::string, double>::iterator it_map = this->_map.end();
-    --it_map;
-    std::string input_date = it_map->first;
+    std::string input_date = _curr_date;
     double minDiff = 1e10; // A large number that serves as an initial maximum
 
     std::map<std::string, double>::iterator it = this->_exchange_rates.begin();
@@ -120,11 +118,11 @@ void    BitcoinExchange::find_accurate_date()
     this->_closest_date = closest_date;
     std::map<std::string, double>::iterator ite = _exchange_rates.find(closest_date);
     if (it != _exchange_rates.end())
-        this->_rtn_rate = it_map->second * ite->second;
+        this->_rtn_rate = _curr_value * ite->second;
 
     char buffer[256]; // A buffer to hold the formatted string
 
-    sprintf(buffer, "%s => %.2f => %.2f", it_map->first.c_str(), it_map->second, this->_rtn_rate);
+    sprintf(buffer, "%s => %.2f = %.2f", _curr_date.c_str(), _curr_value, this->_rtn_rate);
     std::string rtn_string(buffer);
     this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, rtn_string));
 }
@@ -196,38 +194,37 @@ int BitcoinExchange::is_valid_line(std::string line)
     }
     
     date = line.substr(0, index);
-    // _date.push_back(line.substr(0, index));
     value = line.substr(index + 1);
-
-    // if (date[i].empty() || value.empty())
     if (date.empty() || value.empty())
     {
-        // this->_rtn_rates.push_back("Error: bad input => " + line);
         this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: bad input => " + line));
         return (false);
     }
     if (is_valid_date(date) == false || (rtn_value = is_valid_value(value)) == -1)
         return (false);
-    this->_map.insert(std::pair<std::string, double>(date, rtn_value));
-    // std::cout << "date: " << _date.back() << " | value: " << _value.back() << std::endl;
-    // _exchange_rates.insert(std::pair<std::string, double>(_date.back(), _value.back()));
-    // // print the map
-    // std::cout << "The map is: " << std::endl;
-    // std::map<std::string, double>::iterator it = _exchange_rates.begin();
-    // std::map<std::string, double>::iterator end = _exchange_rates.end();
-    // while (it != end)
-    // {
-    //     std::cout << it->first << " => " << it->second << '\n';
-    //     it++;
-    // }
-    // std::cout << std::endl;
     return (true);
 }
 
 double BitcoinExchange::is_valid_value(std::string value)
 {
+    // Remove leading spaces
+    while (!value.empty() && std::isspace(value[0]))
+    {
+        value.erase(0, 1);
+        // std::cout << "shaahah\n";
+        // value.substr(1, value.size() - 1);
+        sleep(1/2);
+    }
+
+    // Remove trailing spaces
+    while (!value.empty() && std::isspace(value[value.size() - 1]))
+    {
+        value.erase(value.size() - 1, value.size() - 2);
+        // value.substr(0, value.size() - 1);
+        sleep(1/2);
+    }
     bool pnt = std::find(value.begin(), value.end(), '.') != value.end();
-    if (value.find_first_not_of("f0123456789.") == std::string::npos)
+    if (value.find_first_not_of("0123456789.") != std::string::npos)
     {
         this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: bad input => " + value));
         return (-1);
@@ -243,43 +240,45 @@ double BitcoinExchange::is_valid_value(std::string value)
             if (it != value.end())
             {
                 this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: bad input => " + value + " is incorrect!"));
+                _curr_value = -1;
                 return (-1);
             }
         }
-        // need to check that there is a digit before and after `.` to handle problems like `.2` or `2.`
         size_t pnt_index = value.find('.');
         if (pnt_index == 0 || (pnt_index > 0 && !isdigit(value[pnt_index - 1])))
         {
             this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: bad input => " + value + " is incorrect!"));
+            _curr_value = -1;
             return (-1);
         }
         if (pnt_index == value.size() - 1 || (pnt_index < value.size() - 1 && !isdigit(value[pnt_index + 1])))
         {
             this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: bad input => " + value + " is incorrect!"));
+            _curr_value = -1;
             return (-1);
         }
     }
-    value.erase(value.begin()); // in this way i am skipping the space after the vertical bar `|`
     // then we will check if there is minus operator or not
     if (value[0] == '-')
     {
         this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: not a positive number."));
+        _curr_value = -1;
         return (-1);
     }
-
     double nbr = std::stod(value);
     if (nbr > 1000)
     {
         this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: too large a number."));
+        _curr_value = -1;
         return (-1);
     }
+    _curr_value = nbr;
     // _value.push_back(nbr);
     return (nbr);
 }
 
 void    BitcoinExchange::fill_the_map()
 {
-    // i need to fill this map with the data i have in the data.csv file
     // open data.csv file
     std::ifstream fs("data.csv");
 
@@ -304,15 +303,5 @@ void    BitcoinExchange::fill_the_map()
         size_t index = line.find(',');
         this->_exchange_rates.insert(std::pair<std::string, double>(line.substr(0, index), std::stod(line.substr(index + 1))));
     }
-
-    // print the map
-    // std::cout << "The map is: " << std::endl;
-    // std::map<std::string, double>::iterator it = _exchange_rates.begin();
-    // std::map<std::string, double>::iterator end = _exchange_rates.end();
-    // while (it != end)
-    // {
-    //     std::cout << it->first << " => " << it->second << '\n';
-    //     it++;
-    // }
-    // std::cout << std::endl;
+    fs.close();
 }

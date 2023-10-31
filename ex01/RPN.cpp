@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aoumad <aoumad@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aoumad <abderazzakoumad@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 16:28:53 by aoumad            #+#    #+#             */
-/*   Updated: 2023/03/23 14:14:19 by aoumad           ###   ########.fr       */
+/*   Updated: 2023/10/31 21:18:07 by aoumad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #include "RPN.hpp"
 
@@ -42,13 +44,18 @@ void    RPN::calc(std::string input)
     std::istringstream iss(input);
     std::string token;
     int op1, op2;
-    char op;
+    std::string op;
 
     while (iss >> op)
     {
-        if (isdigit(op) && (op - '0') < 10)
-            this->_stack.push(op - '0');
-        else if (op == '+' || op == '-' || op == '*' || op == '/')
+        if (op.size() > 1)
+        {
+            std::cerr << "Error: Invalid operator" << std::endl;
+            exit(1);
+        }
+        if (isdigit(op[0]) && atoi(op.c_str()) < 10)
+            this->_stack.push(atoi(op.c_str()));
+        else if (op == "+" || op == "-" || op == "*" || op == "/")
         {
             if (this->_stack.size() < 2)
             {
@@ -60,7 +67,7 @@ void    RPN::calc(std::string input)
             op1 = this->_stack.top();
             this->_stack.pop();
 
-            switch(op)
+            switch(op[0])
             {
                 case '+':
                     this->_stack.push(op1 + op2);
