@@ -6,11 +6,35 @@
 /*   By: aoumad <abderazzakoumad@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 15:47:10 by aoumad            #+#    #+#             */
-/*   Updated: 2023/10/31 22:22:48 by aoumad           ###   ########.fr       */
+/*   Updated: 2023/11/01 18:20:42 by aoumad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
+
+BitcoinExchange::BitcoinExchange()
+{
+}
+
+BitcoinExchange::BitcoinExchange(const BitcoinExchange& input_filename)
+{
+    *this = input_filename;
+}
+
+BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange & rhs)
+{
+    if (this != &rhs)
+    {
+        this->_exchange_rates = rhs._exchange_rates;
+        this->_closest_date = rhs._closest_date;
+        this->_map = rhs._map;
+        this->_rtn_rates = rhs._rtn_rates;
+        this->_rtn_rate = rhs._rtn_rate;
+        this->_curr_date = rhs._curr_date;
+        this->_curr_value = rhs._curr_value;
+    }
+    return *this;
+}
 
 BitcoinExchange::BitcoinExchange(char *input_filename)
 {
@@ -86,7 +110,7 @@ void    BitcoinExchange::find_accurate_date()
 
     std::map<std::string, double>::iterator it = this->_exchange_rates.begin();
     std::map<std::string, double>::iterator end = this->_exchange_rates.end();
-    std::string closest_date = it->first;
+    std::string closest_date = "nothing";
 
     while (it != end)
     {
@@ -114,6 +138,11 @@ void    BitcoinExchange::find_accurate_date()
         }
         else
             it++;
+    }
+    if (closest_date == "nothing")
+    {
+        this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: no data available for this date: " + input_date));
+        return ;
     }
     this->_closest_date = closest_date;
     std::map<std::string, double>::iterator ite = _exchange_rates.find(closest_date);
@@ -151,7 +180,7 @@ void    BitcoinExchange::Input_checker(char *file)
     std::string value;
     // int     index;
 
-    // check the existence of the file
+   // check the existence of the file
     if (!fs.is_open())
     {
         std::cerr << "Error: Failed to open file!!" << std::endl;
@@ -187,6 +216,14 @@ int BitcoinExchange::is_valid_line(std::string line)
     std::string value;
     std::string date;
     double rtn_value;
+    if (line.empty())
+    {
+        return (false);
+    }
+    if (std::all_of(line.begin(), line.end(), isspace))
+    {
+        return (false);
+    }
     if (index == std::string::npos || line.at(11) != '|' || index != line.rfind('|'))
     {
         this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: bad input => " + line));
@@ -209,24 +246,18 @@ double BitcoinExchange::is_valid_value(std::string value)
 {
     // Remove leading spaces
     while (!value.empty() && std::isspace(value[0]))
-    {
         value.erase(0, 1);
-        // std::cout << "shaahah\n";
-        // value.substr(1, value.size() - 1);
-        sleep(1/2);
-    }
 
     // Remove trailing spaces
     while (!value.empty() && std::isspace(value[value.size() - 1]))
     {
-        value.erase(value.size() - 1, value.size() - 2);
-        // value.substr(0, value.size() - 1);
-        sleep(1/2);
+        value.erase(value.size() - 1);
     }
     bool pnt = std::find(value.begin(), value.end(), '.') != value.end();
     if (value.find_first_not_of("0123456789.") != std::string::npos)
     {
         this->_rtn_rates.insert(std::pair<double, std::string>(_rtn_rates_index++, "Error: bad input => " + value));
+        _curr_value = -1;
         return (-1);
     }
 

@@ -6,7 +6,7 @@
 /*   By: aoumad <abderazzakoumad@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 16:28:53 by aoumad            #+#    #+#             */
-/*   Updated: 2023/10/31 21:18:07 by aoumad           ###   ########.fr       */
+/*   Updated: 2023/11/01 18:20:56 by aoumad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ RPN &RPN::operator=(RPN const &rhs)
     if (this != &rhs)
     {
         this->_stack = rhs._stack;
+        this->_res = rhs._res;
     }
     return *this;
 }
@@ -50,7 +51,7 @@ void    RPN::calc(std::string input)
     {
         if (op.size() > 1)
         {
-            std::cerr << "Error: Invalid operator" << std::endl;
+            std::cerr << "Error" << std::endl;
             exit(1);
         }
         if (isdigit(op[0]) && atoi(op.c_str()) < 10)

@@ -1,5 +1,28 @@
 #include "PmergeMe.hpp"
 
+PmergeMe::PmergeMe()
+{
+}
+
+PmergeMe &PmergeMe::operator=(const PmergeMe &rhs)
+{
+    if (this != &rhs)
+    {
+        this->numbers = rhs.numbers;
+        this->nbr_length = rhs.nbr_length;
+        this->listContainer = rhs.listContainer;
+        this->dequeContainer = rhs.dequeContainer;
+        this->deque_start_time = rhs.deque_start_time;
+        this->list_start_time = rhs.list_start_time;
+        this->deque_end_time = rhs.deque_end_time;
+        this->list_end_time = rhs.list_end_time;
+        this->num_count = rhs.num_count;
+        this->jacobsthal_list = rhs.jacobsthal_list;
+        this->jacobsthal_deque = rhs.jacobsthal_deque;
+    }
+    return *this;
+}
+
 PmergeMe::PmergeMe(int count, char **argv)
 {
     std::string s;
@@ -64,7 +87,10 @@ bool    PmergeMe::input_parsing(std::string s)
     std::string delimiter = " ";
     size_t pos = 0;
     std::string token;
+    int containsOnlySpaces = 0;
     long num;
+    if (s.c_str() == '\0')
+        std::cerr << "Error: empty argument" << std::endl;
     // check if the string has a space and contains multiple numbers inside it
     if (s.find(delimiter) != std::string::npos)
     {
@@ -80,7 +106,19 @@ bool    PmergeMe::input_parsing(std::string s)
             return (false);
         return (true);
     }
-
+    for (size_t j = 0; j < s.length(); j++)
+    {
+        if (std::isspace(s.c_str()[j]))
+        {
+            containsOnlySpaces++;
+            break; // No need to check further
+        }
+    }
+    if (containsOnlySpaces == int(s.length()))
+    {
+        std::cerr << "Error: empty argument" << std::endl;
+        exit(1);
+    }
     if (s.find_first_not_of("0123456789") != std::string::npos)
     {
         std::cerr << "Error: non numeric arguments" << std::endl;
@@ -139,7 +177,6 @@ void    PmergeMe::sorting_list()
         std::list<int>::iterator it_struggler = listContainer.end();
         it_struggler--;
         struggler = *it_struggler;
-        std::cout << "struggler: " << struggler << std::endl;
     }
     int first = 0;
     int second = 0;
